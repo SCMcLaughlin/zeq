@@ -122,7 +122,7 @@ int packet_alloc(Packet** out, uint32_t flags, uint16_t opcode, const void* vdat
         if (!top) return ZEQ_ERR_MEMORY;
 
         memcpy(&top->buffer[ZEQ_PACKET_MAX_HEADER_SIZE], data, dataLength);
-        packet_write_header(top, flags, opcode, dataLength, dataLength);       
+        packet_write_header(top, flags, opcode, dataLength, 0);       
     } else {
         Packet* prev = NULL;
         uint32_t i;
