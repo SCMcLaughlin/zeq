@@ -4,7 +4,7 @@ CFLAGS?= -O2 -fomit-frame-pointer -std=gnu89 \
 -Wno-unused-result -Wno-strict-aliasing
 
 ifdef debug
-CFLAGS+= -O0 -Wno-format -fno-omit-frame-pointer
+CFLAGS+= -O0 -g -Wno-format -fno-omit-frame-pointer
 CFLAGS+= -DZEQ_DEBUG
 endif
 
@@ -12,6 +12,9 @@ endif
 # Object files
 ################################################################################
 _OBJECTS=               \
+ ack                    \
+ ack_mgr                \
+ crc                    \
  main                   \
  packet_alloc           \
  packet_alloc_legacy    \
@@ -23,7 +26,7 @@ OBJECTS= $(patsubst %,build/%.o,$(_OBJECTS))
 ################################################################################
 # Linker flags
 ################################################################################
-CLIBS= 
+CLIBS= -lz
 
 ################################################################################
 # Util
