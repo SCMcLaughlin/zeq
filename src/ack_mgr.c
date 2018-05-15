@@ -138,15 +138,16 @@ static uint16_t send_combined(Packet* first, uint16_t seq, uint16_t ack, uint32_
             current = current->common.nextModern;
         }
         
-        /* Combine ack if we have one and we still have space (need 5 more bytes) */
+        /* Combine ack if we have one and we still have space */
         if (*hasAck && ((end - offset) + combineOverhead + ZEQ_ACK_PACKET_ACK_COMBINE_SIZE) <= ZEQ_PACKET_MTU) {
             *hasAck = 0;
-            first->buffer[end++] = 4;
+            first->buffer[end++] = ZEQ_PACKET_PROTOCOL_OPCODE_SIZE + ZEQ_PACKET_SEQUENCE_SIZE;
             write = NET_PROTOCOL_OP_ACK;
             memcpy(&first->buffer[end], &write, ZEQ_PACKET_PROTOCOL_OPCODE_SIZE);
             end += ZEQ_PACKET_PROTOCOL_OPCODE_SIZE;
             write = htons(ack);
             memcpy(&first->buffer[end], &write, ZEQ_PACKET_SEQUENCE_SIZE);
+            end += ZEQ_PACKET_SEQUENCE_SIZE;
         }
     }
 

@@ -14,7 +14,7 @@ int main(int argc, const char** argv)
     Packet *p1, *p2, *p3;
     uint8_t a[10];
     uint8_t b[6];
-    uint8_t c[250];
+    uint8_t c[255];
     uint32_t flags = ZEQ_PACKET_SEQUENCED_BIT | ZEQ_PACKET_CRC_BIT | ZEQ_PACKET_COMPRESSION_FLAG_BIT;
 
     memset(a, 'a', sizeof(a));
@@ -28,6 +28,7 @@ int main(int argc, const char** argv)
     p2->common.nextModern = p3;
 
     ack_mgr_init(&mgr);
+    mgr.sendAckNext = 7;
     mgr.crcKey = 0x11223344;
     ack_mgr_queue_send(&mgr, p1);
     packet_drop_all(&p1->common);
