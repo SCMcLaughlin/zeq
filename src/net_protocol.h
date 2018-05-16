@@ -16,6 +16,7 @@
 #define NET_PROTOCOL_OP_FRAGMENT 0x0d00
 #define NET_PROTOCOL_OP_OUT_OF_ORDER 0x1100
 #define NET_PROTOCOL_OP_ACK 0x1500
+#define NET_PROTOCOL_OP_COMBINED_LONG 0x1900
 
 #pragma pack(1)
 
@@ -30,7 +31,7 @@ typedef struct {
     uint16_t    opcode;
     uint32_t    sessionId;
     uint32_t    crcKey;
-    uint8_t     unknownA;
+    uint8_t     crcSize;
     uint8_t     format;
     uint8_t     unknownB;
     uint32_t    maxLength;

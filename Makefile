@@ -16,6 +16,7 @@ _OBJECTS=               \
  ack_mgr                \
  crc                    \
  main                   \
+ net_recv               \
  packet_alloc           \
  packet_alloc_legacy    \
  zeq_atomic             \
