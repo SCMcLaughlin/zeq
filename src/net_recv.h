@@ -4,9 +4,10 @@
 
 #include <stdint.h>
 #include "zeq_byte.h"
+#include "zeq_def.h"
 
 struct AckMgr;
 
-void net_protocol_recv(struct AckMgr* mgr, byte_t* decompressBuf, byte_t* data, uint32_t len, uint32_t flags);
+ZEQ_INTERFACE void net_protocol_recv(struct AckMgr* mgr, byte* decompressBuf, byte* data, uint32_t len, uint32_t flags);
 
 #endif/*NET_RECV_H*/

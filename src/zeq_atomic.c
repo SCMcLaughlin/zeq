@@ -3,6 +3,16 @@
 #include <stdint.h>
 #include "zeq_atomic.h"
 
+bool atomic_flag_test_and_set(atomic_flag_t* a)
+{
+    return __atomic_test_and_set(a, __ATOMIC_SEQ_CST);
+}
+
+void atomic_flag_clear(atomic_flag_t* a)
+{
+    __atomic_clear(a, __ATOMIC_SEQ_CST);
+}
+
 void atomic8_set(atomic8_t* a, int8_t val)
 {
     __atomic_store_n(a, val, __ATOMIC_SEQ_CST);

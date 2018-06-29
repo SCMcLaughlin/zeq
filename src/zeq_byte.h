@@ -4,7 +4,6 @@
 
 #include <stdint.h>
 
-typedef uint8_t byte_t;
+typedef uint8_t byte;
 
 #endif/*ZEQ_BYTE_H*/
-

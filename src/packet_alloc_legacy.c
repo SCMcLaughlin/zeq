@@ -1,15 +1,15 @@
 
 #include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
 #include "packet_structs_legacy.h"
+#include "zeq_alloc.h"
 #include "zeq_atomic.h"
 #include "zeq_byte.h"
 #include "zeq_err.h"
 
 int packet_alloc_legacy(PacketLegacy** out, uint16_t opcode, const void* vdata, uint32_t dataLength)
 {
-    const byte_t* data = (const byte_t*)vdata;
+    const byte* data = (const byte*)vdata;
     PacketLegacy* top = NULL;
     uint32_t count = 1;
     uint32_t total = dataLength + ZEQ_PACKET_LEGACY_OPCODE_SIZE;
@@ -27,7 +27,7 @@ int packet_alloc_legacy(PacketLegacy** out, uint16_t opcode, const void* vdata, 
     }
 
     if (count == 1) {
-        top = (PacketLegacy*)malloc(ZEQ_PACKET_LEGACY_ALLOC_SIZE);
+        top = (PacketLegacy*)zeq_malloc(ZEQ_PACKET_LEGACY_ALLOC_SIZE);
         if (!top) return ZEQ_ERR_MEMORY;
 
         top->common.next = NULL;
@@ -45,7 +45,7 @@ int packet_alloc_legacy(PacketLegacy** out, uint16_t opcode, const void* vdata, 
         uint32_t i;
 
         for (i = 0; i < count; i++) {
-            PacketLegacy* packet = (PacketLegacy*)malloc(ZEQ_PACKET_LEGACY_ALLOC_SIZE);
+            PacketLegacy* packet = (PacketLegacy*)zeq_malloc(ZEQ_PACKET_LEGACY_ALLOC_SIZE);
             uint32_t offset = ZEQ_PACKET_LEGACY_MAX_HEADER_SIZE;
             uint32_t len;
 

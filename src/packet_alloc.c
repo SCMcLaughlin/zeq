@@ -12,7 +12,7 @@
 #include "zeq_err.h"
 #include "zeq_expansion.h"
 
-static int packet_write_unsequenced(Packet* packet, uint32_t flags, uint16_t opcode, const byte_t* data, uint32_t len, uint32_t capacity)
+static int packet_write_unsequenced(Packet* packet, uint32_t flags, uint16_t opcode, const byte* data, uint32_t len, uint32_t capacity)
 {
     uint32_t offset = ZEQ_PACKET_MAX_HEADER_SIZE;
     uint32_t end;
@@ -36,7 +36,7 @@ static int packet_write_unsequenced(Packet* packet, uint32_t flags, uint16_t opc
     
     if ((flags & ZEQ_PACKET_COMPRESSED_BIT) && len >= ZEQ_PACKET_COMPRESSION_THRESHOLD_SIZE) {
         unsigned long dstlen = (unsigned long)capacity;
-        byte_t buf[ZEQ_PACKET_MTU * 2];
+        byte buf[ZEQ_PACKET_MTU * 2];
         int rc;
         
         /* Unfortunately, we have to do an intermediate copy here.
@@ -44,17 +44,17 @@ static int packet_write_unsequenced(Packet* packet, uint32_t flags, uint16_t opc
         ** at the start of EVERY buffer that would ever be sent as an unsequenced packet.
         */
         /*fixme: might not be unreasonable to do the above*/
-        buf[0] = (byte_t)((opcode & 0xff00) >> 8);
+        buf[0] = (byte)((opcode & 0xff00) >> 8);
         memcpy(&buf[1], data, len);
         rc = compress2(&packet->buffer[offset], &dstlen, buf, len + 1, Z_BEST_COMPRESSION);
-        if (rc != Z_OK) return ZEQ_ERR_COMPRESSION;
+        if (rc != Z_OK) return ZEQ_ERR_API;
         end = offset + (uint32_t)dstlen;
         offset--; /*For the first byte of the opcode */
         isCompress = 1;
     } else {
         end = offset + len;
         memcpy(&packet->buffer[offset], data, len);
-        packet->buffer[--offset] = (byte_t)((opcode & 0xff00) >> 8);
+        packet->buffer[--offset] = (byte)((opcode & 0xff00) >> 8);
         isCompress = 0;
     }
 
@@ -65,7 +65,7 @@ static int packet_write_unsequenced(Packet* packet, uint32_t flags, uint16_t opc
         packet->buffer[--offset] = 0;
         packet->buffer[--offset] = 0;
     } else {
-        packet->buffer[--offset] = (byte_t)(opcode & 0x00ff);
+        packet->buffer[--offset] = (byte)(opcode & 0x00ff);
     }
     
     /* Only thing that remains to be written is the CRC, if applicable. The CRC key is
@@ -89,7 +89,7 @@ static void packet_write_header(Packet* packet, uint32_t flags, uint16_t opcode,
         ** See above for why we need to pad certain opcodes with an extra zero byte.
         */
         if ((opcode & 0x00ff) == 0) {
-            packet->buffer[--offset] = (byte_t)((opcode & 0xff00) >> 8);
+            packet->buffer[--offset] = (byte)((opcode & 0xff00) >> 8);
             packet->buffer[--offset] = 0;
             packet->buffer[--offset] = 0;
         } else {
@@ -119,7 +119,7 @@ static void packet_write_header(Packet* packet, uint32_t flags, uint16_t opcode,
 
 int packet_alloc(Packet** out, uint32_t flags, uint16_t opcode, const void* vdata, uint32_t dataLength)
 {
-    const byte_t* data = (const byte_t*)vdata;
+    const byte* data = (const byte*)vdata;
     Packet* top = NULL;
     uint32_t overhead;
     uint32_t fragThreshold;

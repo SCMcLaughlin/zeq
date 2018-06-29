@@ -35,7 +35,7 @@ struct PacketLegacy {
     uint16_t        len;
     uint16_t        fragIndex;
     uint16_t        fragCount;
-    byte_t          buffer[0];
+    byte            buffer[0];
 };
 
 #define ZEQ_PACKET_LEGACY_ALLOC_SIZE (sizeof(PacketLegacy) + ZEQ_PACKET_LEGACY_DATA_MTU + ZEQ_PACKET_LEGACY_MAX_OVERHEAD_SIZE)

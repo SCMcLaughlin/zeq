@@ -41,7 +41,7 @@ struct Packet {
     uint8_t         offset; /* For sequenced packets, the offset after the sequence field; otherwise, offset of whole packet data */
     uint8_t         flags;
     uint16_t        len; /* Includes opcode and first fragment length, but not footer (CRC) */
-    byte_t          buffer[0];
+    byte            buffer[0];
 };
 
 #define ZEQ_PACKET_ALLOC_SIZE (sizeof(Packet) + ZEQ_PACKET_MTU + ZEQ_PACKET_MAX_HEADER_SIZE)

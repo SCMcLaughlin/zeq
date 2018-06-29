@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include "zeq_byte.h"
+#include "zeq_def.h"
 
 struct Packet;
 
@@ -28,13 +29,13 @@ typedef struct AckMgr {
     struct Packet**     sendQueue;
 } AckMgr;
 
-void ack_mgr_init(AckMgr* mgr);
-void ack_mgr_deinit(AckMgr* mgr);
-int ack_mgr_queue_send(AckMgr* mgr, struct Packet* packet);
-void ack_mgr_queue_recv(AckMgr* mgr, byte_t* data, uint32_t len, uint16_t seq);
-void ack_mgr_queue_recv_fragment(AckMgr* mgr, byte_t* data, uint32_t len, uint16_t seq);
-void ack_mgr_recv_unsequenced(AckMgr* mgr, byte_t* data, uint32_t len);
-void ack_mgr_send_out_of_order_request(AckMgr* mgr, uint16_t seq, uint32_t flags);
+ZEQ_INTERFACE void ack_mgr_init(AckMgr* mgr);
+ZEQ_INTERFACE void ack_mgr_deinit(AckMgr* mgr);
+ZEQ_INTERFACE int ack_mgr_queue_send(AckMgr* mgr, struct Packet* packet);
+ZEQ_INTERFACE void ack_mgr_queue_recv(AckMgr* mgr, byte* data, uint32_t len, uint16_t seq);
+ZEQ_INTERFACE void ack_mgr_queue_recv_fragment(AckMgr* mgr, byte* data, uint32_t len, uint16_t seq);
+ZEQ_INTERFACE void ack_mgr_recv_unsequenced(AckMgr* mgr, byte* data, uint32_t len);
+ZEQ_INTERFACE void ack_mgr_send_out_of_order_request(AckMgr* mgr, uint16_t seq, uint32_t flags);
 
 #define ack_mgr_expected_seq(mgr) ((mgr)->recvSeqNext)
 

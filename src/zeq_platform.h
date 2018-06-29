@@ -2,14 +2,14 @@
 #ifndef ZEQ_PLATFORM_H
 #define ZEQ_PLATFORM_H
 
-#if defined(_MSC_VER)
-# define ZEQ_COMPILER_MSVC
-#elif defined(__GNUC__)
+#if defined(__GNUC__)
 # define ZEQ_COMPILER_GCC
 #elif defined(__clang__)
 # define ZEQ_COMPILER_CLANG
+#elif defined(_MSC_VER)
+# define ZEQ_COMPILER_MSVC
 #else
-# error "Unsupported compiler"
+# error "unsupported compiler"
 #endif
 
 #if defined(_WIN32)
@@ -23,7 +23,7 @@
 # elif defined(__APPLE__) && defined(__MACH__)
 #  define ZEQ_OS_MAC
 # else
-#  error "Could not determine target OS"
+#  error "could not determine target OS"
 # endif
 #endif
 

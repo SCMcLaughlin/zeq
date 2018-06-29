@@ -3,10 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ack_mgr.h"
 #include "packet_structs.h"
 #include "packet_alloc.h"
-#include "ack_mgr.h"
-
+#include "zeq_alloc.h"
+#include "zeq_def.h"
+#include "zeq_printf.h"
 
 int main(int argc, const char** argv)
 {
@@ -16,7 +18,11 @@ int main(int argc, const char** argv)
     uint8_t b[6];
     uint8_t c[255];
     uint32_t flags = ZEQ_PACKET_SEQUENCED_BIT | ZEQ_PACKET_CRC_BIT | ZEQ_PACKET_COMPRESSION_FLAG_BIT;
-
+    char* p = NULL;
+    
+    ZEQ_UNUSED(argc);
+    ZEQ_UNUSED(argv);
+    
     memset(a, 'a', sizeof(a));
     memset(b, 'b', sizeof(b));
     memset(c, 'c', sizeof(c));
@@ -33,6 +39,9 @@ int main(int argc, const char** argv)
     ack_mgr_queue_send(&mgr, p1);
     packet_drop_all(&p1->common);
     ack_mgr_deinit(&mgr);
-    return EXIT_SUCCESS;
+    
+    zaprintf(&p, "wooooo %i", argc);
+    zprintf("hello zeq %d %s %p\n", argc, p, p);
+    free(p);
+    return 0;
 }
-

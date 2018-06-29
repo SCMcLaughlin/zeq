@@ -19,7 +19,7 @@
 struct AckInputPacket {
     uint16_t    len;
     bool        isFrag;
-    byte_t*     data;
+    byte*       data;
 };
 
 void ack_mgr_init(AckMgr* mgr)
@@ -58,7 +58,7 @@ static uint32_t send_seq_to_index(AckMgr* mgr, uint16_t seq)
 }
 
 #include <stdio.h>
-static int send_packet_bytes(byte_t* data, uint32_t len)
+static int send_packet_bytes(byte* data, uint32_t len)
 {
     uint32_t i;
     for (i = 0; i < len; i++) {
@@ -75,8 +75,8 @@ static int send_fragment(Packet* packet, uint16_t seq, uint32_t crcKey)
     uint32_t offset = packet->offset;
     uint32_t end = offset + packet->len;
     int isCompress = 0;
-    byte_t* buffer;
-    byte_t compressBuf[ZEQ_PACKET_MTU * 2];
+    byte* buffer;
+    byte compressBuf[ZEQ_PACKET_MTU * 2];
     uint16_t write;
 
     offset -= ZEQ_PACKET_SEQUENCE_SIZE;
@@ -89,7 +89,7 @@ static int send_fragment(Packet* packet, uint16_t seq, uint32_t crcKey)
     if (isCompress) {
         unsigned long dstlen = (unsigned long)(sizeof(compressBuf) - offset);
         int rc = compress2(&compressBuf[offset], &dstlen, &packet->buffer[offset], (unsigned long)(end - offset), Z_BEST_COMPRESSION);
-        if (rc != Z_OK) return ZEQ_ERR_COMPRESSION;
+        if (rc != Z_OK) return ZEQ_ERR_API;
         end = offset + (uint32_t)dstlen;
         buffer = compressBuf;
     } else {
@@ -121,8 +121,8 @@ static uint16_t send_combined(Packet* first, uint16_t seq, uint16_t ack, uint32_
     uint32_t end = offset + first->len;
     int isCompress = 0;
     int isCombined = 1;
-    byte_t* buffer;
-    byte_t compressBuf[ZEQ_PACKET_MTU * 2];
+    byte* buffer;
+    byte compressBuf[ZEQ_PACKET_MTU * 2];
     uint16_t write;
     
     /* Write the first packet's sequence */
@@ -180,7 +180,7 @@ static uint16_t send_combined(Packet* first, uint16_t seq, uint16_t ack, uint32_
     if (isCompress) {
         unsigned long dstlen = (unsigned long)(sizeof(compressBuf) - offset);
         int rc = compress2(&compressBuf[offset], &dstlen, &first->buffer[offset], (unsigned long)(end - offset), Z_BEST_COMPRESSION);
-        if (rc != Z_OK) return ZEQ_ERR_COMPRESSION;
+        if (rc != Z_OK) return ZEQ_ERR_API;
         end = offset + (uint32_t)dstlen;
         buffer = compressBuf;
     } else {
@@ -410,7 +410,7 @@ static void process_recv_queue(AckMgr* mgr, uint32_t index)
     mgr->sendAckNext = seq;
 }
 
-static void ack_mgr_recv(AckMgr* mgr, byte_t* data, uint32_t len, uint16_t seq, bool isFrag)
+static void ack_mgr_recv(AckMgr* mgr, byte* data, uint32_t len, uint16_t seq, bool isFrag)
 {
     AckInputPacket* packet;
     uint32_t index = recv_seq_to_index(mgr, seq);
@@ -441,7 +441,7 @@ static void ack_mgr_recv(AckMgr* mgr, byte_t* data, uint32_t len, uint16_t seq, 
     packet = &mgr->recvQueue[index];
     packet->isFrag = isFrag;
     packet->len = (uint16_t)len;
-    packet->data = (byte_t*)malloc(len);
+    packet->data = (byte*)malloc(len);
     if (!packet->data) return;
     memcpy(packet->data, data, len);
     
@@ -452,12 +452,12 @@ static void ack_mgr_recv(AckMgr* mgr, byte_t* data, uint32_t len, uint16_t seq, 
         mgr->recvSeqLast = seq + 1;
 }
 
-void ack_mgr_queue_recv(AckMgr* mgr, byte_t* data, uint32_t len, uint16_t seq)
+void ack_mgr_queue_recv(AckMgr* mgr, byte* data, uint32_t len, uint16_t seq)
 {
     
 }
 
-void ack_mgr_queue_recv_fragment(AckMgr* mgr, byte_t* data, uint32_t len, uint16_t seq)
+void ack_mgr_queue_recv_fragment(AckMgr* mgr, byte* data, uint32_t len, uint16_t seq)
 {
     /* Check if we can complete the fragment set without doing an allocation for this piece */
     if (mgr->fragLength) {
@@ -465,14 +465,14 @@ void ack_mgr_queue_recv_fragment(AckMgr* mgr, byte_t* data, uint32_t len, uint16
     }
 }
 
-void ack_mgr_recv_unsequenced(AckMgr* mgr, byte_t* data, uint32_t len)
+void ack_mgr_recv_unsequenced(AckMgr* mgr, byte* data, uint32_t len)
 {
     
 }
 
 void ack_mgr_send_out_of_order_request(AckMgr* mgr, uint16_t seq, uint32_t flags)
 {
-    byte_t buffer[32];
+    byte buffer[32];
     uint32_t len = ZEQ_PACKET_PROTOCOL_OPCODE_SIZE;
     uint16_t write;
     

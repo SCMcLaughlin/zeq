@@ -10,10 +10,10 @@
 #include "net_protocol.h"
 #include "packet_structs.h"
 #include "zeq_byte.h"
+#include "zeq_def.h"
 #include "zeq_err.h"
-#include "zeq_fallthru.h"
 
-static int net_check_crc(AckMgr* mgr, byte_t* data, uint32_t len)
+static int net_check_crc(AckMgr* mgr, byte* data, uint32_t len)
 {
     uint16_t actual = htons(crc16(data, len - ZEQ_PACKET_CRC_SIZE, mgr->crcKey));
     uint16_t reported;
@@ -21,9 +21,9 @@ static int net_check_crc(AckMgr* mgr, byte_t* data, uint32_t len)
     return !(actual == reported);
 }
 
-static int net_recv_decompress(byte_t* decompressBuf, byte_t** outData, uint32_t* outLen)
+static int net_recv_decompress(byte* decompressBuf, byte** outData, uint32_t* outLen)
 {
-    byte_t* data = *outData;
+    byte* data = *outData;
     uint32_t len = *outLen;
     uint32_t offset = (data[0] == 0x00) ? 2 : 1;
     
@@ -31,7 +31,7 @@ static int net_recv_decompress(byte_t* decompressBuf, byte_t** outData, uint32_t
         /* Compressed */
         unsigned long dstlen = ZEQ_PACKET_DECOMPRESS_BUFFER_SIZE;
         int rc = uncompress(&decompressBuf[offset], &dstlen, &data[offset + 1], len - offset - 1);
-        if (rc != Z_OK) return ZEQ_ERR_COMPRESSION;
+        if (rc != Z_OK) return ZEQ_ERR_API;
         
         data = decompressBuf;
         len = (uint32_t)dstlen + offset + 1;
@@ -48,7 +48,7 @@ static int net_recv_decompress(byte_t* decompressBuf, byte_t** outData, uint32_t
     return ZEQ_OK;
 }
 
-static void net_recv_combined_long(AckMgr* mgr, byte_t* data, uint32_t len, uint32_t flags)
+static void net_recv_combined_long(AckMgr* mgr, byte* data, uint32_t len, uint32_t flags)
 {
     uint32_t offset = ZEQ_PACKET_PROTOCOL_OPCODE_SIZE;
     
@@ -66,7 +66,7 @@ static void net_recv_combined_long(AckMgr* mgr, byte_t* data, uint32_t len, uint
     }
 }
 
-static void net_recv_packet(AckMgr* mgr, byte_t* data, uint32_t len, uint32_t flags)
+static void net_recv_packet(AckMgr* mgr, byte* data, uint32_t len, uint32_t flags)
 {
     uint32_t offset = ZEQ_PACKET_PROTOCOL_OPCODE_SIZE + ZEQ_PACKET_SEQUENCE_SIZE;
     uint16_t seq;
@@ -94,7 +94,7 @@ static void net_recv_packet(AckMgr* mgr, byte_t* data, uint32_t len, uint32_t fl
     }
 }
 
-static void net_recv_combined(AckMgr* mgr, byte_t* data, uint32_t len, uint32_t flags)
+static void net_recv_combined(AckMgr* mgr, byte* data, uint32_t len, uint32_t flags)
 {
     uint32_t offset = ZEQ_PACKET_PROTOCOL_OPCODE_SIZE;
     
@@ -106,7 +106,7 @@ static void net_recv_combined(AckMgr* mgr, byte_t* data, uint32_t len, uint32_t 
     }
 }
 
-static void net_recv_fragment(AckMgr* mgr, byte_t* data, uint32_t len, uint32_t flags)
+static void net_recv_fragment(AckMgr* mgr, byte* data, uint32_t len, uint32_t flags)
 {
     uint32_t offset = ZEQ_PACKET_PROTOCOL_OPCODE_SIZE + ZEQ_PACKET_SEQUENCE_SIZE;
     uint16_t seq;   
@@ -126,7 +126,7 @@ static void net_recv_fragment(AckMgr* mgr, byte_t* data, uint32_t len, uint32_t 
     }
 }
 
-void net_protocol_recv(AckMgr* mgr, byte_t* decompressBuf, byte_t* data, uint32_t len, uint32_t flags)
+void net_protocol_recv(AckMgr* mgr, byte* decompressBuf, byte* data, uint32_t len, uint32_t flags)
 {
     uint16_t protoOp;
     

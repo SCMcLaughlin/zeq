@@ -3,8 +3,9 @@
 #define CRC_H
 
 #include <stdint.h>
+#include "zeq_def.h"
 
-uint16_t crc16(const void* data, uint32_t len, uint32_t key);
+ZEQ_INTERFACE uint16_t crc16(const void* data, uint32_t len, uint32_t key);
 
 #endif/*CRC_H*/
 

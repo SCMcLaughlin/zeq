@@ -37,7 +37,7 @@ static uint32_t crc16_table[] = {
 	0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94, 0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
 };
 
-static uint32_t crc16_update(byte_t* data, uint32_t len, uint32_t crc)
+static uint32_t crc16_update(byte* data, uint32_t len, uint32_t crc)
 {
     uint32_t i;
     for (i = 0; i < len; i++) {
@@ -50,8 +50,8 @@ uint16_t crc16(const void* vdata, uint32_t len, uint32_t key)
 {
     uint32_t crc;
     if (key == 0) return 0;
-    crc = crc16_update((byte_t*)&key, sizeof(key), 0xffffffff);
-    crc = crc16_update((byte_t*)vdata, len, crc);
+    crc = crc16_update((byte*)&key, sizeof(key), 0xffffffff);
+    crc = crc16_update((byte*)vdata, len, crc);
     return (uint16_t)(~crc & 0xffff);
 }
 
