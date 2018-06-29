@@ -1,7 +1,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "cute_file.h"
+#include "zeq_alloc.h"
+#include "zeq_file.h"
 
 char* file2str(const char* path, size_t* len)
 {
@@ -16,7 +17,7 @@ char* file2str(const char* path, size_t* len)
     
     if (bytes == 0) goto fail;
     
-    ptr = (char*)malloc(bytes + 1);
+    ptr = (char*)zeq_malloc(bytes + 1);
     if (!ptr) goto fail;
     if (fread(ptr, bytes, 1, fp) != 1) {
         free(ptr);

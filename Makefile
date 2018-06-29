@@ -30,6 +30,7 @@ _OBJECTS=               \
  zeq_atomic             \
  zeq_bit                \
  zeq_clock              \
+ zeq_file               \
  zeq_printf             \
  zeq_semaphore          \
  zeq_string             \

@@ -1,6 +1,4 @@
 
-#include "zeq_platform.h"
-
 #define ZEQ_AMALG
 #define STB_SPRINTF_STATIC
 

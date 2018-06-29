@@ -1,4 +1,5 @@
 
+#include <stdint.h>
 #include "zeq_bit.h"
 
 uint32_t bit_next_pow2_u32(uint32_t n)
